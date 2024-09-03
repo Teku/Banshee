@@ -2,7 +2,7 @@
 
 ## Overview
 
-Banshee is a device management system that allows you to monitor and configure ESP32-based devices remotely. It consists of two main components:
+Banshee is a device management system that allows you to monitor and configure ESP32-based (like the WT32-ETH01) devices remotely. It consists of two main components:
 
 1. An ESP32 device running custom firmware (Banshee)
 2. A PHP-based server API for device registration and configuration
