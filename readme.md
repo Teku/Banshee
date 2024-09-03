@@ -73,5 +73,6 @@ create credentials.h file with your API endpoint
 
 - FT232RL FTDI USB Type C to TTL Serial Converter
 - WT32-ETH01 ESP32 Development Board
+- Jump IO01 to GND for programming mode, disconnect after power on
 
 ![Wiring Diagram](banshee/wt32.drawio.svg)
