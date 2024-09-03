@@ -68,3 +68,10 @@ A simple web interface is provided to:
 ## Setup and Usage
 
 create credentials.h file with your API endpoint
+
+## Wiring Diagram for WT32 programming
+
+- FT232RL FTDI USB Type C to TTL Serial Converter
+- WT32-ETH01 ESP32 Development Board
+
+![Wiring Diagram](wt32.drawio.svg)
