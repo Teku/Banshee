@@ -136,19 +136,48 @@ function getDeviceConfig($device_id, $current_ip) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-gray-100">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PHP Device Logger</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>PHP Device Logger</h1>
+<body class="h-full">
+    <div class="min-h-full">
+        <nav class="bg-gray-800">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex h-16 items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <h1 class="text-white font-bold text-xl">PHP Device Logger</h1>
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <a href="#" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium">Dashboard</a>
+                                <a href="request_logs.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Request Logs</a>
+                                <a href="device_manager.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage Devices</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
-    <h3>Registered Device IDs:</h3>
-    <div id="output-device-ids"></div>
+        <header class="bg-white shadow">
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold tracking-tight text-gray-900">Registered Devices</h2>
+            </div>
+        </header>
+
+        <main>
+            <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+                <div id="output-device-ids" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+            </div>
+        </main>
+    </div>
 
     <script>
-        // Function to fetch and display registered device IDs
         function fetchDeviceIDs() {
             let xhr = new XMLHttpRequest();
             xhr.open('GET', 'fetch_device_ids.php', true);
@@ -160,9 +189,34 @@ function getDeviceConfig($device_id, $current_ip) {
                     output.innerHTML = ''; // Clear the previous entries
 
                     deviceIDs.forEach(function(id) {
-                        let idDiv = document.createElement('div');
-                        idDiv.innerHTML = `<strong>${id.timestamp}</strong> - Device ID: ${id.device_id} - Last Seen: ${id.last_seen}`;
-                        output.appendChild(idDiv);
+                        let lastSeen = new Date(id.last_seen);
+                        let now = new Date();
+                        let diffMinutes = Math.floor((now - lastSeen) / 60000);
+                        let isActive = diffMinutes < 5;
+
+                        let card = document.createElement('div');
+                        card.className = 'bg-white overflow-hidden shadow rounded-lg flex';
+                        card.innerHTML = `
+                            <div class="flex-shrink-0 flex items-center justify-center w-16 bg-${isActive ? 'green' : 'red'}-100 border-r border-gray-200">
+                                <div class="w-3 h-3 rounded-full bg-${isActive ? 'green' : 'red'}-500"></div>
+                            </div>
+                            <div class="flex-grow flex flex-col">
+                                <div class="px-4 py-5 sm:p-6 flex-grow">
+                                    ${id.description ? `<h2 class="text-xl font-bold text-gray-900 mb-2">${id.description}</h2>` : ''}
+                                    <h3 class="text-lg font-medium leading-6 text-gray-900">Device ID: ${id.device_id}</h3>
+                                    <div class="mt-2 max-w-xl text-sm text-gray-500">
+                                        <p>Last Seen: ${id.last_seen}</p>
+                                        <p>Status: ${isActive ? 'Active' : 'Inactive'}</p>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-4 sm:px-6 mt-auto">
+                                    <div class="text-xs">
+                                        <p class="font-medium text-gray-600">Added: ${id.timestamp}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        output.appendChild(card);
                     });
                 }
             };
@@ -176,8 +230,5 @@ function getDeviceConfig($device_id, $current_ip) {
         // Initial fetch
         fetchDeviceIDs();
     </script>
-
-    <p><a href="request_logs.php">View Request Logs</a></p>
-    <p><a href="device_manager.php">Manage Devices</a></p>
 </body>
 </html>
